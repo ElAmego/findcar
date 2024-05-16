@@ -1,0 +1,237 @@
+{% extends 'parserAv/base.html' %}
+{% load static %}
+
+{% block additional_media %}
+<link rel="stylesheet" href="{% static 'parserAv/css/car-detail-page.css' %}">
+{% endblock additional_media %}
+
+{% block content %}
+<section class="table" id="home">
+  <div class="shape shape__big"></div>
+
+  <div class="detail-data_container">
+    <div class="detail-data_flex-container">
+      <h1 class="detail-data_title title-center">
+        <a href="{{data.link}}">{{ title }}</a>
+      </h1>
+
+      <div class="detail-data_table">
+        <div class="detail-data_row">
+          <img src="{{ details.img_link }}" class="detail-data_column_photo" alt="">
+
+          <div class="detail-data_row_body">
+
+           {% if data.body == 'седан' %}
+              {% include "parserAv/svg/sedan.html" %}
+           {% elif data.body == 'универсал' %}
+              {% include "parserAv/svg/universal.html" %}
+           {% elif data.body == 'внедорожник 5 дв.' or data.body == 'внедорожник 3 дв.'%}
+              {% include "parserAv/svg/suv.html" %}
+           {% elif data.body == 'хэтчбек 5 дв.' or data.body == 'хэтчбек 3 дв.' or data.body == 'лифтбек' %}
+              {% include "parserAv/svg/hatchback.html" %}
+           {% elif data.body == 'купе' %}
+              {% include "parserAv/svg/coupe.html" %}
+           {% elif data.body == 'минивэн' %}
+              {% include "parserAv/svg/minivan.html" %}
+           {% elif data.body == 'легковой фургон' %}
+              {% include "parserAv/svg/furgon.html" %}
+           {% elif data.body == 'пикап' %}
+              {% include "parserAv/svg/pickup.html" %}
+           {% elif data.body == 'микроавтобус пассажирский'%}
+              {% include "parserAv/svg/microbus.html" %}
+           {% elif data.body == 'микроавтобус грузопассажирский' %}
+              {% include "parserAv/svg/microbus-gruz.html" %}
+           {% elif data.body == 'кабриолет' or data.body == 'родстер'%}
+              {% include "parserAv/svg/cabrio.html" %}
+           {% elif data.body == 'лимузин' %}
+              {% include "parserAv/svg/limousine.html" %}
+           {% endif %}
+           {% block svg %}{% endblock svg%}
+            
+            <div class="detail-data_row_body_size-x">
+              <img src="{% static 'parserAv/images/arrow-x.svg' %}" alt="">
+              <p class="detail-data_row_body_size-x_parameter">
+                {% if body_section != Null %}
+                  {% for body_param in body_section %}
+                    {% if 'мм' not in body_param.Длина %}
+                      {{body_param.Длина}}мм
+                    {% else %}
+                      {{body_param.Длина}}
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  ???
+                {% endif %}
+              </p>
+            </div>
+
+            <div class="detail-data_row_body_size-y">
+              <img src="{% static 'parserAv/images/arrow-y.svg' %}" alt="">
+              <p class="detail-data_row_body_size-y_parameter">
+                {% if body_section is not Null %}
+                  {% for body_param in body_section %}
+                    {% if 'мм' not in body_param.Высота %}
+                      {{body_param.Высота}}мм
+                    {% else %}
+                      {{body_param.Высота}}
+                    {% endif %}
+                  {% endfor %}</p>
+                {% else %}
+                  ???
+                {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-data_row">
+          <div class="detail-data_column">
+            <div class="detail-data_column_section">
+              <h2 class="detail-data_column_title title-center">Общая информация</h2>
+              <div class="detail-data_column_data">
+                <p>
+                  Год: {{data.year}}
+                </p>
+              </div>
+
+              <div class="detail-data_column_data">
+                <p>
+                  Пробег: {{data.mileage}}км
+                </p>
+              </div>
+
+              <div class="detail-data_column_data">
+                <p>
+                  Цена: {{data.price}}$
+                </p>
+              </div>
+
+              <div class="detail-data_column_data">
+                <p>
+                  Ссылка на оригинал: <a href="{{data.link}}">{{data.link}}</a>
+                </p>
+              </div>
+
+              <div class="detail-data_column_data">
+                <p>
+                  Город: {{data.location}}
+                </p>
+              </div>
+
+              <div class="detail-data_column_data">
+                <p>
+                  Цвет: {{color.color}}
+                </p>
+              </div>
+            </div>
+
+            <div class="detail-data_column_section">
+              <h2 class="detail-data_column_title title-center">Кузов</h2>
+              {% if body_section is not Null %}
+                {% for body_param in body_section %}
+                <div class="detail-data_column_data">
+                  <p>
+                    {% for key, value in body_param.items %}
+                    {{ key }} : {{ value }}
+                    {% endfor %}
+                  </p>
+                </div>
+                {% endfor %}
+              {% else %}
+              <div class="detail-data_column_data">
+                <p>Тип кузова: {{data.body}}</p>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="detail-data_column_section">
+              <h2 class="detail-data_column_title title-center">Эксплуатационные показатели</h2>
+              {% if performance_indicators_section is not Null %}
+                {% for performance_indicators_param in performance_indicators_section %}
+                <div class="detail-data_column_data">
+                  <p>
+                    {% for key, value in performance_indicators_param.items %}
+                    {{ key }} : {{ value }}
+                    {% endfor %}
+                  </p>
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="detail-data_column_data">
+                  <p>ИНФОРМАЦИЯ ОТСУТСВУЕТ</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="detail-data_column">
+            <div class="detail-data_column_section">
+              <h2 class="detail-data_column_title title-center">Двигатель</h2>
+              {% if engine_section is not Null %}
+                {% for engine_param in engine_section %}
+                <div class="detail-data_column_data">
+                  <p>
+                    {% for key, value in engine_param.items %}
+                    {{ key }} : {{ value }}
+                    {% endfor %}
+                  </p>
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="detail-data_column_data">
+                  <p>Тип двигателя: {{data.engine}}</p>
+                  <p>Объем: {{data.volume}}</p>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="detail-data_column_section">
+              <h2 class="detail-data_column_title title-center">Трансмиссия и управление</h2>
+              {% if transmission_section is not Null %}
+                {% for transmission_param in transmission_section %}
+                <div class="detail-data_column_data">
+                  <p>
+                    {% for key, value in transmission_param.items %}
+                    {{ key }} : {{ value }}
+                    {% endfor %}
+                  </p>
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="detail-data_column_data">
+                  <p>ИНФОРМАЦИЯ ОТСУТСВУЕТ</p>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="detail-data_column_section">
+              <h2 class="detail-data_column_title title-center">Подвеска и тормоза</h2>
+              {% if suspension_and_brakes_section is not Null %}
+                {% for suspension_and_brakes_param in suspension_and_brakes_section %}
+                <div class="detail-data_column_data">
+                  <p>
+                    {% for key, value in suspension_and_brakes_param.items %}
+                    {{ key }}: {{ value }}
+                    {% endfor %}
+                  </p>
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="detail-data_column_data">
+                  <p>ИНФОРМАЦИЯ ОТСУТСВУЕТ</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="detail-data_column_title title-center">Описание</h2>
+        <p class="detail-data_message">{{data.message}}</p>
+      </div>
+    </div>
+  </div>
+  
+
+</section>
+{% endblock content %}

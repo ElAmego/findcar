@@ -1,0 +1,20 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="600" height="18" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="602" height="20" id="canvas_background" fill="none"/>
+ </g>
+
+ <g fill="hsl(219, 69%, 56%)">
+  <title>Layer 1</title>
+  <path fill="none" stroke="#4178dc" stroke-width="2" id="svg_30" d="m0.23508,8.89024c3.74774,0 7.49552,0 14.991,0c11.24329,0 29.98207,0 56.21639,0c33.72981,0 67.45961,0 127.42368,0c41.22536,0 82.45065,0 127.42375,0c37.47755,0 78.70283,0 112.43264,0c29.98207,0 59.96413,0 82.45065,0c22.48659,0 44.9731,0 59.96413,0l11.24329,0l3.74774,0l3.74774,0"/>
+  <g id="svg_34">
+   <line fill="none" stroke="#4178dc" stroke-width="2" stroke-opacity="null" fill-opacity="null" x1="10.67072" y1="3.68497" x2="0.91463" y2="8.56302" id="svg_31" stroke-linejoin="null" stroke-linecap="null"/>
+   <line fill="none" stroke="#4178dc" stroke-width="2" stroke-opacity="null" fill-opacity="null" x1="10.67072" y1="9.17277" x2="0.91463" y2="14.05082" id="svg_33" stroke-linejoin="null" stroke-linecap="null" transform="rotate(55, 5.79268, 11.6118)"/>
+  </g>
+  <line fill="none" stroke="#4178dc" stroke-width="2" fill-opacity="null" x1="599.58524" y1="9.33064" x2="589.82915" y2="14.20869" id="svg_35" stroke-linejoin="null" stroke-linecap="null" transform="rotate(180, 594.707, 11.7697)"/>
+  <line fill="none" stroke="#4178dc" stroke-width="2" fill-opacity="null" x1="599.58544" y1="3.84275" x2="589.82934" y2="8.7208" id="svg_36" stroke-linejoin="null" stroke-linecap="null" transform="rotate(235, 594.707, 6.28178)"/>
+ </g>
+</svg>

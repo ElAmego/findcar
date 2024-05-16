@@ -1,0 +1,232 @@
+/*=============== GOOGLE FONTS ===============*/
+@import url("https://fonts.googleapis.com/css2?family=Exo:wght@400;500;600&display=swap");
+
+/*=============== VARIABLES CSS ===============*/
+:root {
+  --header-height: 3.5rem;
+
+  /*========== Colors ==========*/
+  /*Color mode HSL(hue, saturation, lightness)*/
+  --first-color: hsl(219, 69%, 56%);
+  --title-color: hsl(219, 8%, 95%);
+  --text-color: hsl(219, 8%, 75%);
+  --white-color: #fff;
+  --body-color: hsl(219, 4%, 4%);
+
+  /*========== Font and typography ==========*/
+  /*.5rem = 8px | 1rem = 16px ...*/
+  --body-font: 'Exo', sans-serif;
+  --normal-font-size: .938rem;
+
+  /*========== Font weight ==========*/
+  --font-medium: 500;
+  --font-semi-bold: 600;
+
+  /*========== z index ==========*/
+  --z-tooltip: 10;
+  --z-fixed: 100;
+}
+
+@media screen and (min-width: 968px) {
+  :root {
+    --normal-font-size: 1rem;
+  }
+}
+
+/*=============== BASE ===============*/
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  background-color: var(--body-color);
+  color: var(--text-color);
+}
+
+h1, h2, h3 {
+  color: var(--title-color);
+  font-weight: var(--font-semi-bold);
+}
+
+a {
+  text-decoration: none;
+}
+
+/*=============== REUSABLE CSS CLASSES ===============*/
+.main {
+  overflow: hidden;
+}
+
+.auth{
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.shape{
+  background-color: hsla(219, 33%, 32%, .5);
+  filter: blur(112px);
+  border-radius: 50%;
+}
+
+.shape__big{
+  width: 400px;
+  height: 400px;
+}
+
+.shape__small{
+  width: 300px;
+  height: 300px;
+}
+
+.auth .shape__big,
+.auth .shape__small{
+  position: absolute;
+}
+
+.auth .shape__big{
+  left: -12rem;
+  top: -12rem;
+}
+
+.auth .shape__small{
+  right: -12rem;
+  bottom: -12rem;
+}
+
+.auth__wrapper{
+  position: relative;
+  text-align: center;
+  background-color: hsl(219, 4%, 7%);
+  border: 2px solid var(--first-color);
+  box-shadow: 0 0 12px hsl(219, 78%, 69%);
+  animation: form 3s infinite;
+  width: 420px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 10px 0;
+  display: grid;
+  justify-content: center;
+}
+
+.auth__wrapper__form{
+  text-align: center;
+}
+
+.auth__wrapper__form__logo{
+  align-items: center;
+  column-gap: .25rem;
+  font-weight: var(--font-medium);
+  transition: .3s;
+  color: var(--title-color);
+  display: initial;
+}
+
+.auth__wrapper__form__logo i{
+  font-size: 1.25rem;
+}
+
+.auth__wrapper__form__logo:hover{
+  color: var(--first-color);
+}
+
+.auth__wrapper__form__title{
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.auth__wrapper__form__field {
+  width: 280px;
+  height: 50px;
+  border-bottom: 2px solid  var(--first-color);
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.auth__wrapper__form__field i {
+  flex: 1;
+  text-align: center;
+  font-size: 20px;
+  color:  var(--first-color);;
+}
+
+.auth__wrapper__form__field input {
+  flex: 5;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 18px;
+  color: var(--white-color);
+  font-weight: 600;
+}
+
+.form__error{
+  margin-left: -2rem;
+}
+
+.errorlist {
+  list-style-type: none;
+  color: red;
+  margin: 0.5rem 0;
+}
+
+.nonfield {
+  max-width: 280px;
+  text-align: initial;
+}
+
+.auth__wrapper__form__btn {
+  padding: 10px 20px;
+  background: none;
+  outline: none;
+  border: 2px solid  var(--first-color);
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 20px 0;
+  color:  var(--white-color);
+}
+
+.auth__wrapper__form__btn:hover {
+  color: var(--white-color);
+  background:  var(--first-color);
+  transition: 1s;
+}
+
+.auth__wrapper__form__text{
+  color: var(--white-color);
+}
+
+@keyframes form{
+  0%{
+    box-shadow: 0 0 12px hsl(219, 78%, 69%);
+  }
+  50%{
+    box-shadow: 0 0 24px hsl(219, 78%, 69%);
+  }
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For large devices */
+@media screen and (min-width: 1040px) {
+  .shape__big{
+    width: 500px;
+    height: 500px;
+  }
+
+  .shape__small{
+    width: 400px;
+    height: 400px;
+  }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="18" height="265" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="20" height="267" id="canvas_background" fill="none"/>
+ </g>
+
+ <g fill="hsl(219, 69%, 56%)">
+  <title>Layer 1</title>
+  <path transform="rotate(90, 8.47352, 132.212)" fill="none" stroke="#4178dc" stroke-width="2" id="svg_30" d="m-123.71448,132.21178c1.65234,0 3.3047,0 6.60939,0c4.95706,0 13.21881,0 24.78527,0c14.87115,0 29.7423,0 56.17989,0c18.17587,0 36.35171,0 56.17992,0c16.52349,0 34.69933,0 49.57048,0c13.21881,0 26.43761,0 36.35171,0c9.91412,0 19.82821,0 26.43761,0l4.95706,0l1.65234,0l1.65234,0"/>
+  <g id="svg_34">
+   <line transform="rotate(90, 11.3491, 5.16305)" fill="none" stroke="#4178dc" stroke-width="2" stroke-opacity="null" fill-opacity="null" x1="16.22714" y1="2.72402" x2="6.47105" y2="7.60207" id="svg_31" stroke-linejoin="null" stroke-linecap="null"/>
+   <line fill="none" stroke="#4178dc" stroke-width="2" stroke-opacity="null" fill-opacity="null" x1="10.73933" y1="2.72403" x2="0.98324" y2="7.60208" id="svg_33" stroke-linejoin="null" stroke-linecap="null" transform="rotate(145, 5.86129, 5.16306)"/>
+  </g>
+  <g id="svg_6">
+   <line transform="rotate(270, 5.70343, 260.119)" fill="none" stroke="#4178dc" stroke-width="2" stroke-opacity="null" fill-opacity="null" x1="10.58161" y1="257.6798" x2="0.82552" y2="262.55785" id="svg_4" stroke-linejoin="null" stroke-linecap="null"/>
+   <line fill="none" stroke="#4178dc" stroke-width="2" stroke-opacity="null" fill-opacity="null" x1="16.06892" y1="257.67931" x2="6.31283" y2="262.55736" id="svg_5" stroke-linejoin="null" stroke-linecap="null" transform="rotate(325, 11.1912, 260.118)"/>
+  </g>
+ </g>
+</svg>

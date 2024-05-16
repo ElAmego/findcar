@@ -1,0 +1,50 @@
+{% block form %}
+<div id="add-ads">
+  <form method="post" class="add-ads__form">
+    {% csrf_token %}
+    <i class="ri-close-line" id="add-ads__form__close-btn"></i>
+    <div class="add-ads__form__logo">
+      <i class="ri-steering-line"></i>
+      Findcar
+    </div>
+    <h2 class="add-ads__form__title">
+      Добавить объявления
+    </h2>
+
+    <div class="add-ads__form__field">
+      <i class="ri-car-line"></i>
+      <select id="id_car_name" name="car_name">
+        <option value="0">Марка</option>
+        {% for car in car_names_list %}
+          <option value="{{car.1}}">{{car.0}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="add-ads__form__field">
+      <select id="id_model_name" name="model_name">
+        <option value="0">---------</option>
+      </select>
+    </div>
+
+    <div class="add-ads__form__field">
+      <i class="ri-insert-row-top"></i>
+      <input id="id_amount" type="number" name="amount" placeholder="Количество">
+    </div>
+
+    <div class="add-ads__form__field">
+      <i class="ri-money-dollar-circle-line"></i>
+      <input id="id_min_price" type="number" name="min_price" placeholder="Минимальная цена">
+    </div>
+
+    <div class="add-ads__form__field">
+      <i class="ri-money-dollar-circle-line"></i>
+      <input id="id_max_price" type="number" name="max_price" placeholder="Максимальная цена">
+    </div>
+
+    <button type="submit" class="add-ads__form__btn" id="add-ads__form__btn">Добавить</button>
+  </form>
+</div>
+
+<div id="loader"></div>
+{% endblock form %}

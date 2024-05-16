@@ -1,0 +1,175 @@
+/*=============== INDEX ===============*/
+.home{
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  padding: 4.5rem 0 2rem;
+}
+
+.shape{
+  background-color: hsla(219, 33%, 32%, .5);
+  filter: blur(112px);
+  border-radius: 50%;
+}
+
+.shape__big{
+  width: 400px;
+  height: 400px;
+}
+
+.shape__small{
+  width: 300px;
+  height: 300px;
+}
+
+.home .shape__big,
+.home .shape__small{
+  position: absolute;
+}
+
+.home .shape__big{
+  left: -12rem;
+  top: -12rem;
+}
+
+.home .shape__small{
+  right: -12rem;
+  bottom: -12rem;
+}
+
+.home__wrapper {
+  max-width: 1024px;
+  margin-right: 1.5rem;
+  margin-left: 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+  position: relative;
+  row-gap: 3rem;
+}
+
+.home__wrapper__data{
+  text-align: center;
+}
+
+.home__wrapper__data__welcome{
+  font-size: var(--h1-font-size);
+  margin-bottom: 1rem;
+}
+
+.home__wrapper__data__login{
+  font-size: var(--h3-font-size);
+  margin-bottom: .25rem;
+}
+
+.home__wrapper__data__date{
+  font-size: var(--small-font-size);
+  font-weight: 400;
+  color: var(--text-color);
+  display: inline-flex;
+  align-items: center;
+  column-gap: .25rem;
+}
+
+.home__wrapper__data__date i{
+  color: var(--first-color);
+}
+
+.home__wrapper__img{
+  width: 280px;
+  justify-self: center;
+}
+
+.home__wrapper__car{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 4rem;
+  margin-bottom: 2rem;
+}
+
+.home__wrapper__car__data{
+  text-align: center;
+}
+
+.home__wrapper__car__data__icon{
+  background-color: var(--container-color);
+  border-radius: 50%;
+  padding: .376rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: .875rem;
+  margin-bottom: .75rem;
+}
+
+.home__wrapper__car__data__number{
+  font-size: var(--h2-font-size);
+  font-weight: var(--font-medium);
+  margin-bottom: .25rem;
+}
+
+.home__wrapper__car__data__text{
+  font-size: .625rem;
+  font-weight: 400;
+  color: var(--text-color-light);
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For small devices */
+@media screen and (max-width:320px) {
+/*=============== INDEX ===============*/
+  .home__wrapper{
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .home__wrapper__car{
+    column-gap: 2rem;
+  }
+}
+
+/* For medium devices */
+@media screen and (min-width:767px) {
+  .home{
+    padding: 7rem 0 2rem;
+  }
+}
+
+/* For large devices */
+@media screen and (min-width: 1040px) {
+  .home__wrapper{
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home {
+    height: 100vh;
+  }
+
+  .shape__big{
+    width: 500px;
+    height: 500px;
+  }
+
+  .shape__small{
+    width: 400px;
+    height: 400px;
+  }
+
+  .home__wrapper{
+    padding-top: 2rem;
+  }
+
+  .home__wrapper__img{
+    width: 380px;
+  }
+
+  .home__wrapper__car{
+    column-gap: 7rem;
+  }
+
+  .home__wrapper__car__data__icon{
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+}

@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка</title>
+    <link rel="stylesheet" href="{% static 'parserAv/css/error.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="shape shape__big"></div>
+    <div class="shape shape__small"></div>
+    <div class="flex__container">
+      <img src="overturned-car.svg" class="error__img" alt="">
+      <div class="error__title">УПС... Кажется что-то пошло не так...</div>
+        <div class="error__description">Страница, которую вы запрашиваете, не существует. Возможно она устарела или была удалена.</div>
+        <div class="error__action">Вы можете вернуться назад или щелкнуть по
+            <a class="error__redirect" href="{% url 'table' %}">ссылке</a>.</div>
+    </div>
+  </div>
+</body>
+</html>

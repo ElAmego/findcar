@@ -1,0 +1,64 @@
+{% extends 'parserAv/base.html' %}
+{% load static %}
+
+{% block additional_media %}
+<link rel="stylesheet" href="{% static 'parserAv/css/index.css' %}">
+{% endblock additional_media %}
+
+{% block content %}
+<section class="home" id="home">
+    <div class="shape shape__big"></div>
+    <div class="shape shape__small"></div>
+
+    <div class="home__wrapper">
+        <div class="home__wrapper__data">
+            <h1 class="home__wrapper__data__welcome">
+                Добро пожаловать!
+            </h1>
+
+            <h2 class="home__wrapper__data__login">
+                {% if request.user.is_authenticated %}
+                {{ user.username }}
+                {% else %}
+                Гость
+                {% endif %}
+            </h2>
+
+            <h3 class="home__wrapper__data__date">
+                <i class="ri-calendar-line"></i> {{ date_now }}
+            </h3>
+        </div>
+
+        <img src="{% static 'parserAv/images/home.png' %}" alt="" class="home__wrapper__img">
+
+        <div class="home__wrapper__car">
+            <div class="home__wrapper__car__data">
+                <div class="home__wrapper__car__data__icon">
+                    <i class="ri-heart-add-line"></i>
+                </div>
+                <h2 class="home__wrapper__car__data__number">{{ featured_adds }}</h2>
+                <h3 class="home__wrapper__car__data__text">ИЗБРАННОЕ</h3>
+            </div>
+
+            <div class="home__wrapper__car__data">
+                <div class="home__wrapper__car__data__icon">
+                    <i class="ri-time-line"></i>
+                </div>
+                <h2 class="home__wrapper__car__data__number">{{amount}}</h2>
+                <h3 class="home__wrapper__car__data__text">ДОБАВЛЕНО ЗА ВСЁ ВРЕМЯ</h3>
+            </div>
+
+            <div class="home__wrapper__car__data">
+                <div class="home__wrapper__car__data__icon">
+                    <i class="ri-file-add-line"></i>
+                </div>
+                <h2 class="home__wrapper__car__data__number">
+                    {{ all_adds }}
+                </h2>
+                <h3 class="home__wrapper__car__data__text">СЕЙЧАС</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

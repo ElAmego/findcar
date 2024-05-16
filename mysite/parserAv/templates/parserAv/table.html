@@ -1,0 +1,188 @@
+{% extends 'parserAv/base.html' %}
+{% load static %}
+
+{% block additional_media %}
+<link rel="stylesheet" href="{% static 'parserAv/css/table.css' %}">
+{% endblock additional_media %}
+
+{% block content %}
+<section class="table" id="home">
+    <div class="shape shape__big"></div>
+    <div class="shape shape__small"></div>
+
+    <div class="table__tools">
+      <div class="table__tools-btn" id="add__adds" title="Добавить авто">
+        <i class="ri-sticky-note-add-line"></i>
+      </div>
+
+      <div class="table__tools-btn" id="check__status" title="Статус автомобилей">
+        <i class="ri-question-line"></i>
+      </div>
+    </div>
+
+    <div class="table__data">
+      <div class="table__data__wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Год</th>
+              <th>КПП</th>
+              <th>Двигатель</th>
+              <th>Объем/<br>Запас хода</th>
+              <th>Кузов</th>
+              <th>Пробег</th>
+              <th>Расположение</th>
+              <th>Цена $</th>
+              <th>Ссылка</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+
+          <tbody>
+          {% for car in all_cars %}
+          {% if car.status != 'Продается'%}
+            <tr class="table__data__row deleted">
+          {% else %}
+            <tr class="table__data__row" page_link="{{ car.get_absolute_url }}">
+          {% endif %}
+              <td>{{car.car_model.car.car_name}} {{car.car_model.model_name}}</td>
+              <td>{{car.year}}</td>
+              {% if car.status != 'Продается'%}
+              <td colspan="5" class="status">{{car.status}}</td>
+              {% else %}
+              <td>{{car.transmission}}</td>
+              <td>{{car.engine}}</td>
+              <td>{{car.volume}}</td>
+              <td>{{car.body}}</td>
+              <td>{{car.mileage}}</td>
+              {% endif %}
+              <td>{{car.location}}</td>
+              <td>{{car.price}}</td>
+              <td class="table__data__row__link">
+                <a href="{{car.link}}">{{car.link}}</a>
+              </td>
+              <td class="table__data__row__link">
+                <button class="table__data__wrapper__btn add_in_featured color-featured {% if car.isFeatured == True %}is-featured{% endif %}"><i class="ri-star-line"></i></button>
+                <button class="table__data__wrapper__btn delete"><i class="ri-delete-bin-2-line"></i></button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'parserAv/scripts/table.js' %}"></script>
+
+    {% if is_ready %}
+        <script>
+            window.onload = function() {
+                window.location = window.location.href;
+            };
+        </script>
+    {% endif %}
+
+    <script>
+        const add_in_featured = document.getElementsByClassName('add_in_featured')
+        const delete_btn_table = document.getElementsByClassName('delete')
+        const check_status_btn = document.getElementById('check__status')
+        const car_list_select = document.getElementById('id_car_name')
+        const model_list_select = document.getElementById('id_model_name')
+
+        for (let i = 0; i < add_in_featured.length; i++) {
+        if (add_in_featured[i].parentElement.parentElement.children[9]){
+        add_in_featured[i].addEventListener('click', (e) => {
+                add_in_featured[i].classList.toggle('is-featured')
+                console.log(add_in_featured[i].parentElement.parentElement.children[9].textContent)
+
+                e.preventDefault()
+                $.ajax({
+                method: "GET",
+                url: "{% url 'table' %}",
+                data: {'link': add_in_featured[i].parentElement.parentElement.children[9].textContent.trim(),
+                        'type_name': 'add'},
+                dataType: "text",
+                cache: false,
+                })
+            })
+        }
+
+        }
+
+        for (let i = 0; i < delete_btn_table.length; i++){
+            delete_btn_table[i].addEventListener('click', (e) => {
+                e.preventDefault()
+                delete_btn_table[i].parentElement.parentElement.style.display = 'none'
+                $.ajax({
+                method: "GET",
+                url: "{% url 'table' %}",
+                data: {'link': delete_btn_table[i].parentElement.parentElement.children[9].textContent.trim(),
+                        'type_name': 'delete'},
+                dataType: "text",
+                cache: false,
+                })
+            })
+        }
+
+        check_status_btn.addEventListener('click', (e) => {
+          document.getElementById('loader').style.display = 'flex'
+          document.getElementById('wrapper').style.filter='blur(20px)'
+
+          $.ajax({
+            method: "GET",
+            url: "{% url 'table' %}",
+            data: {
+              'type_name': 'check_status',
+            },
+            dataType: "text",
+            cache: false,
+            success: function(data) {
+              location.reload();
+            }
+          })
+        })
+
+      
+        car_list_select.addEventListener('change', (e) => {
+          if (car_list_select.value != 0) {
+            $.ajax({
+              method: "GET",
+              url: "{% url 'table' %}",
+              data: {
+                'type_name': 'get_models',
+                'car_index': car_list_select.value,
+              },
+              dataType: "JSON",
+              cache: false,
+              success: function(data) {
+                fill_select(data)
+              }
+            })
+          } else {
+            fill_select([[0, '---------']])
+          }
+
+
+        })
+
+        function fill_select(model_list) {
+          while (model_list_select.options.length) {
+            model_list_select.options[0] = null;
+          }
+
+          if (model_list[0][1] != '---------') {
+            model_list_select.prepend(new Option('Любая', 0))
+          }
+
+          for (let i = 0; i < model_list.length; i++) {
+            let newOption = new Option(model_list[i][1], model_list[i][0]);
+            model_list_select.append(newOption);
+          }
+        }
+
+    </script>
+{% endblock %}

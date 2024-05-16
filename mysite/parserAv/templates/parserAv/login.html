@@ -1,0 +1,47 @@
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Войти Findcar</title>
+  <link rel="shortcut icon" href="{% static 'parserAv/images/favicon.png'%}" type="image/png">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'parserAv/css/autorisation.css' %}">
+</head>
+<body>
+  <main class="main">
+    <section class="auth">
+      <div class="shape shape__big"></div>
+      <div class="shape shape__small"></div>
+
+      <div class="auth__wrapper">
+        <form method="post" class="auth__wrapper__form">
+          {% csrf_token %}
+          <div class="auth__wrapper__form__logo">
+            <i class="ri-steering-line"></i>
+            Findcar
+          </div>
+          <h2 class="auth__wrapper__form__title">
+            Войти
+          </h2>
+
+          {% for f in form %}
+          <div class="auth__wrapper__form__field">
+            {% if f.name == 'username' %}
+            <i class="ri-user-fill"></i>
+            {% else %}
+            <i class="ri-lock-password-fill"></i>
+            {% endif%}
+            <p>{{ f }}</p>
+          </div>
+          {% endfor %}
+          <div class="form-error">{{ form.non_field_errors }}</div>
+
+          <button type="submit" class="auth__wrapper__form__btn">Войти</button>
+          <p>Нету аккаунта? <a href="{% url 'register' %}" class="auth__wrapper__form__text">Зарегестрироваться</a></p>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

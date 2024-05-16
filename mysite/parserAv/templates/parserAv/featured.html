@@ -1,0 +1,93 @@
+{% extends 'parserAv/base.html' %}
+{% load static %}
+
+{% block additional_media %}
+<link rel="stylesheet" href="{% static 'parserAv/css/featured.css' %}">
+{% endblock additional_media %}
+
+{% block content %}
+<section class="table" id="home">
+    <div class="shape shape__big"></div>
+    <div class="shape shape__small"></div>
+
+    <div class="table__data">
+      <div class="table__data__wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Год</th>
+              <th>КПП</th>
+              <th>Двигатель</th>
+              <th>Объем/<br>Запас хода</th>
+              <th>Кузов</th>
+              <th>Пробег</th>
+              <th>Расположение</th>
+              <th>Цена $</th>
+              <th>Ссылка</th>
+              <th>Примечания</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+
+          <tbody>
+          {% for featured in featured_adds %}
+            <tr>
+              <td>{{featured.name}}</td>
+              <td>{{featured.year}}</td>
+              <td>{{featured.transmission}}</td>
+              <td>{{featured.engine}}</td>
+              <td>{{featured.volume}}</td>
+              <td>{{featured.body}}</td>
+              <td>{{featured.mileage}}</td>
+              <td>{{featured.location}}</td>
+              <td>{{featured.price}}</td>
+              <td>
+                <a href="{{featured.link}}">{{featured.link}}</a>
+              </td>
+              <td>
+                <textarea class="note" id="note" maxlength="255" placeholder="Примечания...">{{featured.note}}</textarea>
+              </td>
+              <td>
+                <button class="table__data__wrapper__btn delete"><i class="ri-delete-bin-2-line"></i></button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script%}
+<script>
+    const notes =  document.getElementsByClassName('note')
+    const delete_btn_featured = document.getElementsByClassName('delete')
+
+    for (let i = 0; i < notes.length; i++){
+        notes[i].addEventListener('blur', (e) => {
+            $.ajax({
+                method: "GET",
+                url: "{% url 'featured' %}",
+                data: {'text': notes[i].value, 'link': notes[i].parentElement.parentElement.children[9].textContent.trim()},
+                dataType: "text",
+                cache: false,
+            })
+        })
+    }
+
+    for (let i = 0; i < delete_btn_featured.length; i++){
+        delete_btn_featured[i].addEventListener('click', (e) => {
+            delete_btn_featured[i].parentElement.parentElement.style.display = 'none'
+            $.ajax({
+                method: "GET",
+                url: "{% url 'featured' %}",
+                data: {'type_name': 'delete', 'link': delete_btn_featured[i].parentElement.parentElement.children[9].textContent.trim()},
+                dataType: "text",
+                cache: false,
+            })
+        })
+    }
+</script>
+{% endblock%}
