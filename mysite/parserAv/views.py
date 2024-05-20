@@ -1,6 +1,6 @@
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -21,8 +21,7 @@ def connection(url):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0'
     }
 
-    cookies = {'hideLocationOverlay': 'true', 'selectedShippingState': 'Pulau Pinang', 'selectedPostalCode': '14000'}
-    req = requests.get(url, headers=headers, cookies=cookies)
+    req = requests.get(url, headers=headers)
     src = req.text
     return BeautifulSoup(src, 'html.parser')
 
@@ -35,8 +34,8 @@ def parser(cars, featured_cars, min_price, max_price, car_index, model_index, am
     for car in cars:
         all_cars_links.append(car.link)
 
-    for featured in featured_cars:
-        featured_cars_links.append(featured.link)
+    for featured_car in featured_cars:
+        featured_cars_links.append(featured_car.link)
 
     if start_model_index == 0:
         models_list = (CarModelsList.objects.filter(car__car_index=car_index).select_related('car')
@@ -53,150 +52,93 @@ def parser(cars, featured_cars, min_price, max_price, car_index, model_index, am
 
         main_soup = connection(url)
 
-        all_cars = main_soup.find_all('div', class_=['listing-item', 'listing-top listing-top--color'])
+        all_cars = main_soup.find_all('div', class_=['listing-item', 'listing-top'])
 
         if len(all_cars) < 25:
             is_work = False
 
         for num in range(0, len(all_cars)):
-            if now >= amount:
+            if now == amount:
                 is_work = False
                 break
 
             if num == 25:
                 page += 1
 
-            default_car = all_cars[num].find('div', class_=['listing-item__wrap'])
+            if start_model_index == 0:
+                car_name = all_cars[num].find('a', class_=['listing-item__link', 'listing-top__title-link']).text
+                for model in models_list:
+                    if car_name.find(model["model_name"]) >= 0:
+                        model_index = model['model_index']
+                        break
 
-            if default_car:
-                if start_model_index == 0:
-                    car_name = default_car.find('a', 'listing-item__link').text
-                    for model in models_list:
-                        if car_name.find(model["model_name"]) >= 0:
-                            model_index = model['model_index']
-                            break
+            # Car link
+            car_link = ('https://cars.av.by' + all_cars[num]
+                        .find('a', class_=['listing-item__link', 'listing-top__title-link']).get('href'))
 
-                default_car_parameters = default_car.find('div', class_=['listing-item__params']).find_all('div')
-                car_link = 'https://cars.av.by' + default_car.find('a', class_=['listing-item__link']).get('href')
-                if car_link not in all_cars_links:
-                    if default_car_parameters[1].text.split(',')[1][1:] == 'электро':
-                        car = Cars()
-                        car.year = default_car_parameters[0].text[:4]
-                        car.transmission = default_car_parameters[1].text.split(',')[0]
-                        car.volume = default_car_parameters[1].text.split(',')[3][1:].replace('\xa0', '')
-                        car.engine = default_car_parameters[1].text.split(',')[1][1:]
-                        car.body = default_car_parameters[1].text.split(',')[2][1:]
-                        car.mileage = default_car_parameters[2].text[:-3].replace('\u2009', '')
-                        car.location = default_car.find('div', class_=['listing-item__location']).text
-                        car.price = default_car.find('div', class_=['listing-item__priceusd']).text[2:-2].replace(
-                            '\u2009', '')
-                        car.message = default_car.find('div', class_=['listing-item__message']).text
-                        car.link = car_link
-                        car.car_model_id = CarModelsList.objects.get(model_index=model_index).id
-                        if car_link in featured_cars_links:
-                            car.isFeatured = True
-                        car.user = request.user
-                        car.save()
-                        car_id = Cars.objects.get(user_id=request.user.id, link=car.link).id
-                        slug = slugify(car.car_model_id) + '-' + str(request.user.id) + str(car_id)
-                        Cars.objects.filter(id=car_id).update(slug=slug)
-                        detail_parser(car, request)
-                        now += 1
+            if car_link in all_cars_links:
+                break
+
+            car_parameters = None
+
+            # Parameters (year, transmission, engine volume, engine type, body, mileage)
+            if all_cars[num].find('div', class_='listing-item__params'):
+                car_parameters = []
+                for i in range(len(all_cars[num].find('div', class_=['listing-item__params']).find_all('div'))):
+                    if i != 1:
+                        car_parameters.append(all_cars[num].find('div', class_=['listing-item__params'])
+                                              .find_all('div')[i].text)
                     else:
-                        if len(default_car_parameters[1].text.split(',')) != 3:
-                            car = Cars()
-                            car.year = default_car_parameters[0].text[:4]
-                            car.transmission = default_car_parameters[1].text.split(',')[0]
-                            car.volume = default_car_parameters[1].text.split(',')[1][1:4]
-                            car.engine = default_car_parameters[1].text.split(',')[2][1:]
-                            car.body = default_car_parameters[1].text.split(',')[3][1:]
-                            car.mileage = default_car_parameters[2].text[:-3].replace('\u2009', '')
-                            car.location = default_car.find('div', class_=['listing-item__location']).text
-                            car.price = default_car.find('div', class_=['listing-item__priceusd']).text[2:-2].replace(
-                                '\u2009', '')
-                            car.message = default_car.find('div', class_=['listing-item__message']).text
-                            car.link = car_link
-                            car.car_model_id = CarModelsList.objects.get(model_index=model_index).id
-                            if car_link in featured_cars_links:
-                                car.isFeatured = True
-                            car.user = request.user
-                            car.save()
-                            car_id = Cars.objects.get(user_id=request.user.id, link=car.link).id
-                            slug = slugify(car.car_model_id) + '-' + str(request.user.id) + str(car_id)
-                            Cars.objects.filter(id=car_id).update(slug=slug)
-                            detail_parser(car, request)
-                            now += 1
+                        car_parameters += (all_cars[num].find('div', class_=['listing-item__params']).find_all('div')[i]
+                                           .text.split(', '))
 
-                        else:
-                            car = Cars()
-                            car.year = default_car_parameters[0].text[:4]
-                            car.transmission = default_car_parameters[1].text.split(',')[0]
-                            car.volume = ''
-                            car.engine = default_car_parameters[1].text.split(',')[1][1:]
-                            car.body = default_car_parameters[1].text.split(',')[2][1:]
-                            car.mileage = default_car_parameters[2].text[:-3].replace('\u2009', '')
-                            car.location = default_car.find('div', class_=['listing-item__location']).text
-                            car.price = default_car.find('div', class_=['listing-item__priceusd']).text[2:-2].replace(
-                                '\u2009', '')
-                            car.message = default_car.find('div', class_=['listing-item__message']).text
-                            car.link = car_link
-                            car.car_model_id = CarModelsList.objects.get(model_index=model_index).id
-                            if car_link in featured_cars_links:
-                                car.isFeatured = True
-                            car.user = request.user
-                            car.save()
-                            car_id = Cars.objects.get(user_id=request.user.id, link=car.link).id
-                            slug = slugify(car.car_model_id) + '-' + str(request.user.id) + str(car_id)
-                            Cars.objects.filter(id=car_id).update(slug=slug)
-                            detail_parser(car, request)
-                            now += 1
+            if all_cars[num].find('div', class_='listing-top__params'):
+                car_parameters = all_cars[num].find('div', class_=['listing-top__params']).text.split(', ')
 
+            # Initialization
+            car = Cars()
+
+            if 'электро' in car_parameters:
+                year, car.transmission, car.engine, car.body, car.volume, mileage = car_parameters
             else:
-                if model_index == 0:
-                    car_name = all_cars[num].find('a', 'listing-top__title-link').text
-                    for model in models_list:
-                        if car_name.find(model["model_name"]) >= 0:
-                            model_index = model['model_index']
-                            break
+                year, car.transmission, car.volume, car.engine, car.body, mileage = car_parameters
 
-                car_link = 'https://cars.av.by' + all_cars[num].find('a', class_=['listing-top__title-link']).get(
-                    'href')
-                if car_link not in all_cars_links:
-                    top_car_parameters = all_cars[num].find('div', class_=['listing-top__params']).text.split(',')
+            car.year = year[:4]
+            car.mileage = int(mileage[:-2].replace('\u2009', ''))
+            car.location = (all_cars[num].find('div', class_=['listing-top__info-location', 'listing-item__location'])
+                            .text)
+            car.price = (all_cars[num]
+                         .find('div', class_=['listing-top__price-usd', 'listing-item__priceusd']).text[2:-2]
+                         .replace('\u2009', ''))
+            car.link = car_link
 
-                    car = Cars()
-                    car.year = top_car_parameters[0][:4]
-                    car.transmission = top_car_parameters[1].split(',')[0][1:]
-                    car.volume = top_car_parameters[2][1:4]
-                    car.engine = top_car_parameters[3][1:]
-                    car.body = top_car_parameters[4][1:]
-                    car.mileage = top_car_parameters[5][:-3].replace('\u2009', '')
-                    car.location = all_cars[num].find('div', class_=['listing-top__info-location']).text
-                    car.price = all_cars[num].find('div', class_=['listing-top__price-usd']).text[2:-2].replace(
-                        '\u2009', '')
-                    car.message = all_cars[num].find('div', class_=['listing-item__message']).text
-                    car.link = car_link
-                    car.car_model_id = CarModelsList.objects.get(model_index=model_index).id
-                    if car_link in featured_cars_links:
-                        car.isFeatured = True
-                    car.user = request.user
-                    car.save()
-                    car_id = Cars.objects.get(user_id=request.user.id, link=car.link).id
-                    slug = slugify(car.car_model_id) + '-' + str(request.user.id) + str(car_id)
-                    Cars.objects.filter(id=car_id).update(slug=slug)
-                    detail_parser(car, request)
-                    now += 1
+            if all_cars[num].find('div', class_=['listing-top__message', 'listing-item__message']).text is not None:
+                car.message = all_cars[num].find('div', class_=['listing-item__message']).text
+            else:
+                car.message = ''
+
+            if car_link in featured_cars_links:
+                car.isFeatured = True
+
+            car.car_model_id = CarModelsList.objects.get(model_index=model_index).id
+            car.user = request.user
+            car.save()
+            car_id = Cars.objects.get(user_id=request.user.id, link=car.link).id
+            slug = slugify(car.car_model_id) + '-' + str(request.user.id) + str(car_id)
+            Cars.objects.filter(id=car_id).update(slug=slug)
+            detail_parser(car)
+            now += 1
 
     amount = CustomUser.objects.get(username=request.user).amount + now
     CustomUser.objects.filter(username=request.user).update(amount=amount)
 
 
-def detail_parser(car, request):
+def detail_parser(car):
     detail_parser_soup = connection(car.link)
-    car_detail = CarDetail()
+    car_detail_data = CarDetail()
     car_color = detail_parser_soup.find('div', class_='card__description').text.split(',')[2].strip()
-    car_detail.color_id = Colors.objects.get(color=car_color).id
-    car_detail.img_link = detail_parser_soup.find('div', class_='gallery__frame').find('img').get('data-src')
+    car_detail_data.color_id = Colors.objects.get(color=car_color).id
+    car_detail_data.img_link = detail_parser_soup.find('div', class_='gallery__frame').find('img').get('data-src')
 
     if detail_parser_soup.find('div', class_='card__modification'):
         detail_link_div = detail_parser_soup.find('div', class_='card__modification')
@@ -207,7 +149,7 @@ def detail_parser(car, request):
         for i in range(len(all_data_sections)):
             section_name = all_data_sections[i].find('h2', class_='modification-section-title').text
 
-            match (section_name):
+            match section_name:
                 case 'Кузов':
                     body_section = all_data_sections[i].find('dl', class_='modification-list')
                     body_section_arr = []
@@ -216,7 +158,7 @@ def detail_parser(car, request):
                         body_param_value = body_param.find('dd').text
                         body_section_arr.append({body_param_name: body_param_value})
                     db_body_section_arr = pickle.dumps(body_section_arr)
-                    car_detail.body_section = db_body_section_arr
+                    car_detail_data.body_section = db_body_section_arr
 
                 case 'Двигатель':
                     engine_section = all_data_sections[i].find('dl', class_='modification-list')
@@ -226,7 +168,7 @@ def detail_parser(car, request):
                         engine_param_value = engine_param.find('dd').text
                         engine_section_arr.append({engine_param_name: engine_param_value})
                     db_engine_section_arr = pickle.dumps(engine_section_arr)
-                    car_detail.engine_section = db_engine_section_arr
+                    car_detail_data.engine_section = db_engine_section_arr
 
                 case 'Трансмиссия и управление':
                     transmission_section = all_data_sections[i].find('dl', class_='modification-list')
@@ -236,7 +178,7 @@ def detail_parser(car, request):
                         transmission_param_value = transmission_param.find('dd').text
                         transmission_section_arr.append({transmission_param_name: transmission_param_value})
                     db_transmission_section_arr = pickle.dumps(transmission_section_arr)
-                    car_detail.transmission_section = db_transmission_section_arr
+                    car_detail_data.transmission_section = db_transmission_section_arr
 
                 case 'Эксплуатационные показатели':
                     performance_indicators_section = all_data_sections[i].find('dl', class_='modification-list')
@@ -247,7 +189,7 @@ def detail_parser(car, request):
                         performance_indicators_section_arr.append(
                             {performance_indicators_param_name: performance_indicators_param_value})
                     db_performance_indicators_section_arr = pickle.dumps(performance_indicators_section_arr)
-                    car_detail.performance_indicators_section = db_performance_indicators_section_arr
+                    car_detail_data.performance_indicators_section = db_performance_indicators_section_arr
 
                 case 'Подвеска и тормоза':
                     suspension_and_brakes_section = all_data_sections[i].find('dl', class_='modification-list')
@@ -258,9 +200,9 @@ def detail_parser(car, request):
                         suspension_and_brakes_section_arr.append({
                             suspension_and_brakes_param_name: suspension_and_brakes_param_value})
                     db_suspension_and_brakes_section_arr = pickle.dumps(suspension_and_brakes_section_arr)
-                    car_detail.suspension_and_brakes_section = db_suspension_and_brakes_section_arr
-    car_detail.car = car
-    car_detail.save()
+                    car_detail_data.suspension_and_brakes_section = db_suspension_and_brakes_section_arr
+    car_detail_data.car = car
+    car_detail_data.save()
 
 
 def index(request):
@@ -331,10 +273,11 @@ def table(request):
                     else:
                         Cars.objects.filter(user=request.user, link=link).update(isFeatured=True)
                         car = Cars.objects.filter(user_id=request.user, link=link).select_related('car_model__car')
-                        add_car = Featured(name=f'{car[0].car_model.car.car_name} {car[0].car_model.model_name}', year=car[0].year,
-                                           transmission=car[0].transmission, volume=car[0].volume, engine=car[0].engine,
-                                           body=car[0].body, mileage=car[0].mileage, price=car[0].price, link=car[0].link,
-                                           location=car[0].location, user=request.user)
+                        add_car = Featured(name=f'{car[0].car_model.car.car_name} {car[0].car_model.model_name}',
+                                           year=car[0].year, transmission=car[0].transmission, volume=car[0].volume,
+                                           engine=car[0].engine, body=car[0].body, mileage=car[0].mileage,
+                                           price=car[0].price, link=car[0].link, location=car[0].location,
+                                           user=request.user)
                         add_car.save()
 
                 # Если type-name - delete, то происходит удаления объявления из БД
@@ -345,9 +288,7 @@ def table(request):
                 # Если type-name - check_status, то происходит обновление статуса автомобилей пользователя
                 if request.GET['type_name'] == 'check_status':
                     for car in cars:
-                        print(car.link)
                         soup = connection(car.link)
-                        status = None
                         try:
                             status = soup.find('div', class_='gallery__status').get_text()
                         except AttributeError:
